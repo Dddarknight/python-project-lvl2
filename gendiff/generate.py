@@ -1,11 +1,21 @@
 import json
 
+def normalize_bool(x):
+    if x == True:
+        return 'true'
+    elif x == False:
+        return 'false'
+    else:
+        return x
 
 def generate_diff(file1, file2):
     with open(file1, "r") as read_file1:
         file1_converted = json.load(read_file1)
     with open(file2, "r") as read_file2:
         file2_converted = json.load(read_file2)
+    print(file1_converted)
+    file1_converted = {key: normalize_bool(value) for key, value in file1_converted.items()}
+    file2_converted = {key: normalize_bool(value) for key, value in file2_converted.items()}
     common_keys = set(file1_converted.keys()) & set(file2_converted.keys())
     result_string = '{' + '\n'
     for key in common_keys:
