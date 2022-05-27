@@ -3,5 +3,3 @@ make lint: #запуск flake8
 
 install:
 	poetry install
-
-check: selfcheck test lint
