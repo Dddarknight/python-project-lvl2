@@ -15,7 +15,6 @@ def generate_diff(file1, file2):
         file1_converted = json.load(read_file1)
     with open(file2, "r") as read_file2:
         file2_converted = json.load(read_file2)
-    print(file1_converted)
     file1_converted = {key: normalize_bool(value)
                        for key, value in file1_converted.items()}
     file2_converted = {key: normalize_bool(value)
@@ -26,8 +25,8 @@ def generate_diff(file1, file2):
         if file1_converted[key] == file2_converted[key]:
             result_string += f'  {key}: {file1_converted[key]}\n'
         else:
-            result_string += f'- {key}: {file1_converted[key]}\n+ \
-                {key}: {file2_converted[key]}\n'
+            result_string += f'- {key}: {file1_converted[key]}\n' + \
+                             f'+ {key}: {file2_converted[key]}\n'
     for key in (set(file1_converted.keys()) - common_keys):
         result_string += f'- {key}: {file1_converted[key]}\n'
     for key in (set(file2_converted.keys()) - common_keys):
