@@ -3,3 +3,6 @@ make lint: #запуск flake8
 
 install:
 	poetry install
+
+test-coverage:
+	poetry run pytest --cov=gendiff --cov-report xml
