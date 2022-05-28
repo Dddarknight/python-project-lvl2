@@ -13,11 +13,11 @@ def normalize_bool(x):
 
 def converting(file):
     file_list = file.split('.')
-    if file_list[len(file_list)-1] == 'json':
+    if file_list[len(file_list) - 1] == 'json':
         with open(file, "r") as read_file:
             file_converted = json.load(read_file)
-    if (file_list[len(file_list)-1] == 'yaml' or
-        file_list[len(file_list)-1] == 'yml'):
+    if (file_list[len(file_list) - 1] == 'yaml' or (
+            file_list[len(file_list) - 1] == 'yml')):
         with open(file, "r") as read_file:
             file_converted = yaml.load(read_file, Loader=yaml.FullLoader)
     file_converted = {key: normalize_bool(value)
