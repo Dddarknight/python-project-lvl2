@@ -56,3 +56,9 @@ def test_gendiff_json_yaml_tree():
     required_result = open('tests/fixtures/result_tree.txt', 'r')
     func_result = generate_diff('tests/fixtures/file3.json', 'tests/fixtures/file4.yml')
     assert func_res(func_result) == txt_res(required_result)
+
+
+def test_gendiff_plain():
+    required_result = open('tests/fixtures/result_plain.txt', 'r')
+    func_result = generate_diff('tests/fixtures/file3.json', 'tests/fixtures/file4.yml', format_name='plain')
+    assert func_res(func_result) == txt_res(required_result)
