@@ -40,21 +40,25 @@ def stylysh(tree, node1, node2):
         result_str = '{\n'
         for key, value in tree.items():
             if isinstance(value, dict):
-                result_str += f'{indent}  {key}: {inner(value, depth+1, node1[key], node2[key])}'
+                new_value = inner(value, depth + 1, node1[key], node2[key])
+                result_str += f'{indent}  {key}: {new_value}'
             else:
-                if value == 'unchanged':
-                    result_str += f'{indent}  {key}: {stringify(node1[key], depth+1)}\n'
-                elif value == 'changed':
-                    result_str += f'{indent}- {key}: {stringify(node1[key], depth+1)}\n' + (
-                                  f'{indent}+ {key}: {stringify(node2[key], depth+1)}\n')
-                elif value == 'only_first':
-                    result_str += f'{indent}- {key}: {stringify(node1[key], depth+1)}\n'
-                elif value == 'only_second':
-                    result_str += f'{indent}+ {key}: {stringify(node2[key], depth+1)}\n'
+                dict_diff = {'unchanged': ['  ', node1],
+                             'only_first': ['- ', node1],
+                             'only_second': ['+ ', node2]}
+                if value == 'changed':
+                    new_value1 = stringify(node1[key], depth + 1)
+                    new_value2 = stringify(node2[key], depth + 1)
+                    result_str += f'{indent}- {key}: {new_value1}\n' + (
+                                  f'{indent}+ {key}: {new_value2}\n')
+                else:
+                    new_value = stringify(dict_diff[value][1][key], depth + 1)
+                    new_indent = dict_diff[value][0]
+                    result_str += f'{indent}{new_indent}{key}: {new_value}\n'
         return (result_str + current_indent + '}\n')
     return (inner(tree, 0, node1, node2)[:-2] + '}')
 
-                
+
 def generate_diff(file1, file2):
     file1_converted = converting(file1)
     file2_converted = converting(file2)
