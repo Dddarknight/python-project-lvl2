@@ -6,7 +6,8 @@ def stylish(tree, node1, node2):
         indent = '  ' + '    ' * (depth)
         current_indent = '    ' * depth
         result_str = '{\n'
-        for key, value in tree.items():
+        for key in sorted(tree.keys()):
+            value = tree[key]
             if isinstance(value, dict):
                 new_value = inner(value, depth + 1, node1[key], node2[key])
                 result_str += f'{indent}  {key}: {new_value}'

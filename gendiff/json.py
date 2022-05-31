@@ -18,7 +18,8 @@ def json_dict_elem(value, key, node1, node2):
 def json_dict(tree, node1, node2):
 
     def inner(tree, node1, node2, dictionary={}):
-        for key, value in tree.items():
+        for key in sorted(tree.keys()):
+            value = tree[key]
             if isinstance(value, dict):
                 dictionary[key] = inner(
                     value, node1[key], node2[key], dictionary={})

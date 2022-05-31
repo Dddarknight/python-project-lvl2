@@ -45,7 +45,8 @@ def plain_elem(value, file1, file2, path_int):
 def plain(tree, file1, file2):
 
     def inner(tree, path='', result_str=''):
-        for key, value in tree.items():
+        for key in sorted(tree.keys()):
+            value = tree[key]
             path_int = f'{path}{key}'
             if isinstance(value, dict):
                 result_str += inner(value, path=(path_int + '.'))
