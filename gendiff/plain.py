@@ -50,11 +50,8 @@ def plain(tree, file1, file2):
             if isinstance(value, dict):
                 path_int = f'{path}{key}.'
                 result_str += inner(value, path=path_int)
-            else:
-                if value == 'unchanged':
-                    continue
-                else:
-                    result_str += plain_elem(value, file1, file2, key, path)
+            if value in ('updated', 'added', 'removed'):
+                result_str += plain_elem(value, file1, file2, key, path)
         path = ''
         return result_str
     return (inner(tree)).strip('\n')
