@@ -1,7 +1,8 @@
 import json
 
 
-def json_dict_elem(value, dictionary, key, node1, node2):
+def json_dict_elem(value, key, node1, node2):
+    dictionary = {}
     if value == 'updated':
         dictionary[f'- {key}'] = node1[key]
         dictionary[f'+ {key}'] = node2[key]
@@ -23,7 +24,7 @@ def json_dict(tree, node1, node2):
                     value, node1[key], node2[key], dictionary={})
             else:
                 dictionary.update(json_dict_elem(
-                    value, dictionary, key, node1, node2))
+                    value, key, node1, node2))
         return dictionary
     return inner(tree, node1, node2)
 
