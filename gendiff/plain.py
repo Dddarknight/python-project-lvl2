@@ -54,4 +54,5 @@ def plain(tree, file1, file2):
                 result_str += plain_elem(value, file1, file2, key, path)
         path = ''
         return result_str
-    return (inner(tree)).strip('\n')
+    result = (inner(tree)).strip('\n')
+    return result
