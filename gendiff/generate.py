@@ -20,6 +20,10 @@ def converting(file):
 def diff_internal(node1, node2):
     tree = {}
     common_keys = set(node1.keys()) & set(node2.keys())
+    removed = set(node1.keys()) - common_keys
+    added = set(node2.keys()) - common_keys
+    tree.update({key: 'removed' for key in removed})
+    tree.update({key: 'added' for key in added})
     for key in common_keys:
         if isinstance(node1[key], dict) and isinstance(node2[key], dict):
             tree[key] = diff_internal(node1[key], node2[key])
@@ -28,10 +32,6 @@ def diff_internal(node1, node2):
                 tree[key] = 'unchanged'
             else:
                 tree[key] = 'updated'
-    for key in (set(node1.keys()) - common_keys):
-        tree[key] = 'removed'
-    for key in (set(node2.keys()) - common_keys):
-        tree[key] = 'added'
     return tree
 
 

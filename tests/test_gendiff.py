@@ -8,19 +8,16 @@ import json
 def txt_res(required_result):
     required_result_set = set()
     for line in required_result:
-        required_result_set.add(line)
+        line_corr = line.strip('\n')
+        required_result_set.add(line_corr)
     return required_result_set
 
 
 def func_res(func_result):
     func_result_set = set()
     func_result_corr = func_result.split('\n')
-    for index, line in enumerate(func_result_corr):
-        if index == len(func_result_corr) - 1:
-            line_corr = line
-        else:
-            line_corr = line + '\n'
-        func_result_set.add(line_corr)
+    for line in func_result_corr:
+        func_result_set.add(line)
     return func_result_set
 
 def test_gendiff_json_flat():

@@ -48,7 +48,7 @@ def plain(tree, file1, file2):
         for key, value in tree.items():
             path_int = f'{path}{key}'
             if isinstance(value, dict):
-                result_str += inner(value, path=(path_int+'.'))
+                result_str += inner(value, path=(path_int + '.'))
             if value in ('updated', 'added', 'removed'):
                 result_str += plain_elem(value, file1, file2, path_int)
         path = ''
