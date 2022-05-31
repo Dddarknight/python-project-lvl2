@@ -27,11 +27,8 @@ def diff_internal(node1, node2):
     for key in common_keys:
         if isinstance(node1[key], dict) and isinstance(node2[key], dict):
             tree[key] = diff_internal(node1[key], node2[key])
-        else:
-            if node1[key] == node2[key]:
-                tree[key] = 'unchanged'
-            else:
-                tree[key] = 'updated'
+            continue
+        tree[key] = 'unchanged' if node1[key] == node2[key] else 'updated'
     return tree
 
 
