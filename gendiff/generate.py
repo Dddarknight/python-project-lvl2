@@ -2,6 +2,7 @@ import json
 import yaml
 from gendiff.stylish import stylish
 from gendiff.plain import plain
+from gendiff.json import json_
 
 
 def converting(file):
@@ -26,11 +27,11 @@ def diff_internal(node1, node2):
             if node1[key] == node2[key]:
                 tree[key] = 'unchanged'
             else:
-                tree[key] = 'changed'
+                tree[key] = 'updated'
     for key in (set(node1.keys()) - common_keys):
-        tree[key] = 'only_first'
+        tree[key] = 'removed'
     for key in (set(node2.keys()) - common_keys):
-        tree[key] = 'only_second'
+        tree[key] = 'added'
     return tree
 
 
@@ -42,3 +43,5 @@ def generate_diff(file1, file2, format_name='stylish'):
         return stylish(diff, file1_converted, file2_converted)
     if format_name == 'plain':
         return plain(diff, file1_converted, file2_converted)
+    if format_name == 'json':
+        return json_(diff, file1_converted, file2_converted)

@@ -12,9 +12,9 @@ def stylish(tree, node1, node2):
                 result_str += f'{indent}  {key}: {new_value}'
             else:
                 dict_diff = {'unchanged': ['  ', node1],
-                             'only_first': ['- ', node1],
-                             'only_second': ['+ ', node2]}
-                if value == 'changed':
+                             'removed': ['- ', node1],
+                             'added': ['+ ', node2]}
+                if value == 'updated':
                     new_value1 = stringify(node1[key], depth + 1)
                     new_value2 = stringify(node2[key], depth + 1)
                     result_str += f'{indent}- {key}: {new_value1}\n' + (
