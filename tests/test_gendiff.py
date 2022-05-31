@@ -2,7 +2,6 @@
 
 
 from gendiff.generate import generate_diff
-import json
 
 
 def txt_res(required_result):
@@ -19,6 +18,7 @@ def func_res(func_result):
     for line in func_result_corr:
         func_result_set.add(line)
     return func_result_set
+
 
 def test_gendiff_json_flat():
     required_result = open('tests/fixtures/result_flat.txt', 'r')
