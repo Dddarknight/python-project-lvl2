@@ -9,8 +9,4 @@
 
 [![Python CI](https://github.com/Dddarknight/python-project-lvl2/actions/workflows/pyci.yml/badge.svg)](https://github.com/Dddarknight/python-project-lvl2/actions)
 
-[![asciinema_step5](https://asciinema.org/a/uDMhhPOkAeU8FJ3DfclsJB4Uh.svg)](https://asciinema.org/a/uDMhhPOkAeU8FJ3DfclsJB4Uh)
-
-[![asciinema_step7](https://asciinema.org/a/9UOYdo38pVChW3xI1QQ9OjIxJ.svg)](https://asciinema.org/a/9UOYdo38pVChW3xI1QQ9OjIxJ)
-
-[![asciinema_step8](https://asciinema.org/a/vr8Wx711q9q5gaQss6bSJ30wj.svg)](https://asciinema.org/a/vr8Wx711q9q5gaQss6bSJ30wj)
+[![asciinema](https://asciinema.org/a/htP3S68jeBmb0p8yWY6KHmfms.svg)](https://asciinema.org/a/htP3S68jeBmb0p8yWY6KHmfms)
