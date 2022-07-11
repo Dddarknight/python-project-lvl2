@@ -1,8 +1,17 @@
 [tool.poetry]
 name = "hexlet-code"
 version = "0.1.0"
-description = ""
+description = "Shows difference between two files (in json or yaml format. Provides 3 optional types of result presentation."
 authors = ["Dddarknight <9801677@gmail.com>"]
+license = "GPL-3.0-only"
+readme = "README.md"
+keywords = ["diff", "difference", "json", "yaml", "yml"]
+classifiers = [
+  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+  "Programming Language :: Python :: 3",
+  "Topic :: Text Processing"
+]
+repository = "https://github.com/Dddarknight/python-project-lvl2"
 packages = [
   { include = "gendiff" },
 ]
