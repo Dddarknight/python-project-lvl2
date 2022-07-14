@@ -29,11 +29,18 @@ The difference is shown in 3 formats:
 | plain | Shows changes for the each element in the string format (only in the case of changing the element), with presenting the path of such element in the nested structure. |
 | json | Returns a json-string with difference. Shows elements that were added in the second file with "+", elements that were removed from the first file - with "-".|
 
+## Installation
+```
+$ git clone git@github.com:Dddarknight/python-project-lvl2.git
+$ cd python-project-lvl2
+$ python3 -m pip install dist/hexlet_code-0.1.0-py3-none-any.whl
+```
+
 ## Usage
 ```
-$ gendiff "file_path1" "file_path2"
-$ gendiff "file_path1" "file_path2" --format plain
-$ gendiff "file_path1" "file_path2" -f json
+$ gendiff `"file_path1"` `"file_path2"`
+$ gendiff `"file_path1"` `"file_path2"` --format plain
+$ gendiff `"file_path1"` `"file_path2"` -f json
 
 ```
 
