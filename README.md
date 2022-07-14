@@ -38,9 +38,9 @@ $ python3 -m pip install dist/hexlet_code-0.1.0-py3-none-any.whl
 
 ## Usage
 ```
-$ gendiff `"file_path1"` `"file_path2"`
-$ gendiff `"file_path1"` `"file_path2"` --format plain
-$ gendiff `"file_path1"` `"file_path2"` -f json
+$ gendiff `file_path1` `file_path2`
+$ gendiff `file_path1` `file_path2` --format plain
+$ gendiff `file_path1` `file_path2` -f json
 
 ```
 
