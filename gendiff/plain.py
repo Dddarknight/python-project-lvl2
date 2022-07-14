@@ -1,4 +1,4 @@
-def normalize1(x):
+def normalize_bool_none(x):
     if x is True:
         return 'true'
     elif x is False:
@@ -9,7 +9,7 @@ def normalize1(x):
         return x
 
 
-def normalize2(x):
+def normalize_dict_str(x):
     if isinstance(x, dict):
         return '[complex value]'
     elif isinstance(x, str):
@@ -25,7 +25,7 @@ def find_path(path, node):
     return node
 
 
-def plain_elem(value, file1, file2, path_int):
+def make_plain_elem(value, file1, file2, path_int):
     dict_diff = {'updated': ' was updated. From ',
                  'removed': ' was removed',
                  'added': ' was added with value: '}
@@ -33,16 +33,19 @@ def plain_elem(value, file1, file2, path_int):
     if value == 'removed':
         result_str += f"{dict_diff[value]}\n"
     elif value == 'updated':
-        fact_value = normalize1(normalize2(find_path(path_int, file2)))
-        old_value = normalize1(normalize2(find_path(path_int, file1)))
+        fact_value = normalize_bool_none(
+            normalize_dict_str(find_path(path_int, file2)))
+        old_value = normalize_bool_none(
+            normalize_dict_str(find_path(path_int, file1)))
         result_str += f"{dict_diff[value]}{old_value} to {fact_value}\n"
     elif value == 'added':
-        fact_value = normalize1(normalize2(find_path(path_int, file2)))
+        fact_value = normalize_bool_none(
+            normalize_dict_str(find_path(path_int, file2)))
         result_str += f"{dict_diff[value]}{fact_value}\n"
     return result_str
 
 
-def plain(tree, file1, file2):
+def make_plain(tree, file1, file2):
 
     def inner(tree, path='', result_str=''):
         for key in sorted(tree.keys()):
@@ -51,7 +54,7 @@ def plain(tree, file1, file2):
             if isinstance(value, dict):
                 result_str += inner(value, path=(path_int + '.'))
             if value in ('updated', 'added', 'removed'):
-                result_str += plain_elem(value, file1, file2, path_int)
+                result_str += make_plain_elem(value, file1, file2, path_int)
         path = ''
         return result_str
     return (inner(tree)).strip('\n')
