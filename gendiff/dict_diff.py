@@ -1,8 +1,8 @@
 import json
 import yaml
-from gendiff.stylish import make_stylish
-from gendiff.plain import make_plain
-from gendiff.json import make_json
+from gendiff.formats.stylish import make_stylish
+from gendiff.formats.plain import make_plain
+from gendiff.formats.json import make_json
 
 
 def convert_file_to_dict(file):

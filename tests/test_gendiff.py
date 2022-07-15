@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 
 
-from gendiff.generate import generate_diff
+from gendiff.dict_diff import generate_diff
 
 
 def txt_res(required_result):

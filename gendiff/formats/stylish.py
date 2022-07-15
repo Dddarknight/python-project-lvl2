@@ -1,4 +1,4 @@
-from gendiff.json_str import stringify
+from gendiff.formats.json_str import stringify
 
 
 def make_stylish(tree, node1, node2):
