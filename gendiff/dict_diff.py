@@ -5,13 +5,19 @@ from gendiff.formats.plain import make_plain
 from gendiff.formats.json import make_json
 
 
+MAP_FORMAT_TO_FUNC = {'stylish': make_stylish,
+                      'plain': make_plain,
+                      'json': make_json,
+                      None: make_stylish}
+
+
 def convert_file_to_dict(file):
     file_list = file.split('.')
-    if file_list[len(file_list) - 1] == 'json':
+    file_format = file_list[len(file_list) - 1]
+    if file_format == 'json':
         with open(file, "r") as read_file:
             file_converted = json.load(read_file)
-    if (file_list[len(file_list) - 1] == 'yaml' or (
-            file_list[len(file_list) - 1] == 'yml')):
+    if file_format in ('yaml', 'yml'):
         with open(file, "r") as read_file:
             file_converted = yaml.load(read_file, Loader=yaml.FullLoader)
     return file_converted
@@ -36,9 +42,4 @@ def generate_diff(file1, file2, format_name='stylish'):
     file1_dict = convert_file_to_dict(file1)
     file2_dict = convert_file_to_dict(file2)
     diff = make_diff_tree(file1_dict, file2_dict)
-    if format_name == 'stylish' or format_name is None:
-        return make_stylish(diff, file1_dict, file2_dict)
-    if format_name == 'plain':
-        return make_plain(diff, file1_dict, file2_dict)
-    if format_name == 'json':
-        return make_json(diff, file1_dict, file2_dict)
+    return MAP_FORMAT_TO_FUNC[format_name](diff, file1_dict, file2_dict)

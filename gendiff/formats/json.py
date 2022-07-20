@@ -3,14 +3,11 @@ import json
 
 def convert_elem_to_required(key, value, node1, node2):
     dictionary = {}
-    if value == 'updated':
+    if value in ('updated', 'removed'):
         dictionary[f'- {key}'] = node1[key]
+    if value in ('updated', 'added'):
         dictionary[f'+ {key}'] = node2[key]
-    elif value == 'removed':
-        dictionary[f'- {key}'] = node1[key]
-    elif value == 'added':
-        dictionary[f'+ {key}'] = node2[key]
-    else:
+    if value == 'unchanged':
         dictionary[key] = node1[key]
     return dictionary
 
