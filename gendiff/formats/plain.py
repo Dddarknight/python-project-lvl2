@@ -58,7 +58,7 @@ def make_plain(tree, file1, file2):
             if isinstance(value, dict):
                 result_str += inner(value, path=(path_relative + '.'))
             if value in ('updated', 'added', 'removed'):
-                result_str += make_plain_elem(value, 
+                result_str += make_plain_elem(value,
                                               file1,
                                               file2,
                                               path_relative)
