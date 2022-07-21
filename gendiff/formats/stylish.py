@@ -1,7 +1,7 @@
 from gendiff.formats.json_str import stringify
 
 
-def make_stylish(tree, node1, node2):
+def modify(tree, node1, node2):
     def inner(tree, depth, node1, node2):
         indent = '  ' + '    ' * (depth)
         current_indent = '    ' * depth

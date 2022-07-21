@@ -27,5 +27,5 @@ def make_json_dict(tree, node1, node2):
     return inner(tree, node1, node2)
 
 
-def make_json(tree, file1, file2):
+def modify(tree, file1, file2):
     return json.dumps(make_json_dict(tree, file1, file2), indent=4)

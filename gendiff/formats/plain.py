@@ -34,7 +34,7 @@ MAP_STATUS_TO_TEXT = {'updated': ' was updated. From ',
                       'added': ' was added with value: '}
 
 
-def make_plain_elem(value, file1, file2, path_relative):
+def modify_elem(value, file1, file2, path_relative):
     result_str = f"Property '{path_relative}'"
     if value == 'removed':
         result_str += f"{MAP_STATUS_TO_TEXT[value]}\n"
@@ -49,7 +49,7 @@ def make_plain_elem(value, file1, file2, path_relative):
     return result_str
 
 
-def make_plain(tree, file1, file2):
+def modify(tree, file1, file2):
 
     def inner(tree, path='', result_str=''):
         for key in sorted(tree.keys()):
@@ -58,10 +58,7 @@ def make_plain(tree, file1, file2):
             if isinstance(value, dict):
                 result_str += inner(value, path=(path_relative + '.'))
             if value in ('updated', 'added', 'removed'):
-                result_str += make_plain_elem(value,
-                                              file1,
-                                              file2,
-                                              path_relative)
+                result_str += modify_elem(value, file1, file2, path_relative)
         path = ''
         return result_str
     return (inner(tree)).strip('\n')

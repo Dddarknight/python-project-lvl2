@@ -1,14 +1,14 @@
 import json
 import yaml
-from gendiff.formats.stylish import make_stylish
-from gendiff.formats.plain import make_plain
-from gendiff.formats.json import make_json
+import gendiff.formats.stylish as stylish
+import gendiff.formats.plain as plain
+import gendiff.formats.json as json_format
 
 
-MAP_FORMAT_TO_FUNC = {'stylish': make_stylish,
-                      'plain': make_plain,
-                      'json': make_json,
-                      None: make_stylish}
+MAP_INPUT_TO_FORMAT = {'stylish': stylish,
+                       'plain': plain,
+                       'json': json_format,
+                       None: stylish}
 
 
 def convert_file_to_dict(file):
@@ -42,4 +42,5 @@ def generate_diff(file1, file2, format_name='stylish'):
     file1_dict = convert_file_to_dict(file1)
     file2_dict = convert_file_to_dict(file2)
     diff = make_diff_tree(file1_dict, file2_dict)
-    return MAP_FORMAT_TO_FUNC[format_name](diff, file1_dict, file2_dict)
+    format = MAP_INPUT_TO_FORMAT[format_name]
+    return format.modify(diff, file1_dict, file2_dict)
