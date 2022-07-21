@@ -1,15 +1,25 @@
-MAP_BOOL_NONE_VALUE_TO_REQUIRED = {True: 'true', False: 'false', None: 'null'}
+def normalize_bool_none(elem):
+    if elem == True:
+        return 'true'
+    elif elem == False:
+        return 'false'
+    elif elem is None:
+        return 'null'
+    else:
+        return elem
 
 
-def normalize(elem):
+def normalize_dict_str(elem):
     if isinstance(elem, dict):
         return '[complex value]'
-    elif elem in MAP_BOOL_NONE_VALUE_TO_REQUIRED.keys():
-        return MAP_BOOL_NONE_VALUE_TO_REQUIRED[elem]
     elif isinstance(elem, str):
         return f"'{elem}'"
     else:
         return elem
+
+
+def normalize(elem):
+    return normalize_bool_none(normalize_dict_str(elem))
 
 
 def find_path(path, node):
