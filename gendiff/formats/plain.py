@@ -1,7 +1,7 @@
 def normalize_bool_none(elem):
-    if elem == True:
+    if elem is True:
         return 'true'
-    elif elem == False:
+    elif elem is False:
         return 'false'
     elif elem is None:
         return 'null'
