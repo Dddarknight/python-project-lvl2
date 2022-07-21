@@ -2,12 +2,12 @@ MAP_BOOL_NONE_VALUE_TO_REQUIRED = {True: 'true', False: 'false', None: 'null'}
 
 
 def normalize(elem):
-    if isinstance(elem, dict):
+    if elem in MAP_BOOL_NONE_VALUE_TO_REQUIRED.keys():
+        return MAP_BOOL_NONE_VALUE_TO_REQUIRED[elem]
+    elif isinstance(elem, dict):
         return '[complex value]'
     elif isinstance(elem, str):
         return f"'{elem}'"
-    elif elem in MAP_BOOL_NONE_VALUE_TO_REQUIRED.keys():
-        return MAP_BOOL_NONE_VALUE_TO_REQUIRED[elem]
     else:
         return elem
 
