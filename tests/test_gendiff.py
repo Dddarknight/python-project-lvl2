@@ -1,85 +1,42 @@
 # -*- coding:utf-8 -*-
 
 
-from gendiff.dict_diff import generate_diff
+import pytest
+import os
+import sys
+from gendiff import generate_diff
+from gendiff.parsers.cli_parsing import parse
+from unittest import mock
 
 
-def make_set_txt_file(required_result):
-    required_result_set = set()
-    for line in required_result:
-        line_corr = line.strip('\n')
-        required_result_set.add(line_corr)
-    return required_result_set
+def get_fixture_path(name):
+    return os.path.join('tests/fixtures', name)
 
 
-def make_set_func_res(func_result):
-    func_result_set = set()
-    func_result_corr = func_result.split('\n')
-    for line in func_result_corr:
-        func_result_set.add(line)
-    return func_result_set
+@pytest.mark.parametrize(
+    'result_file_name, file1_name, file2_name, formatter_name',
+    [('result.flat', 'file1.json', 'file2.json', 'stylish'),
+     ('result.flat', 'file1.yaml', 'file2.yml', 'stylish'),
+     ('result.flat', 'file1.json', 'file2.yml', 'stylish'),
+     ('result.tree', 'file3.json', 'file4.json', 'stylish'),
+     ('result.tree', 'file3.yaml', 'file4.yml', 'stylish'),
+     ('result.tree', 'file3.json', 'file4.yml', 'stylish'),
+     ('result.plain', 'file3.json', 'file4.yml', 'plain'),
+     ('result.plain', 'file3.json', 'file4.json', 'plain'),
+     ('result.json', 'file3.json', 'file4.yml', 'json'),
+     ('result.json', 'file3.json', 'file4.json', 'json')])
+def test_gendiff(result_file_name, file1_name, file2_name, formatter_name):
+    with open(get_fixture_path(result_file_name), 'r') as read_file:
+        required_result = read_file.read()
+    func_result = generate_diff(get_fixture_path(file1_name),
+                                get_fixture_path(file2_name),
+                                formatter_name)
+    assert func_result == required_result
 
 
-def test_gendiff_json_flat():
-    required_result = open('tests/fixtures/result_flat.txt', 'r')
-    func_result = generate_diff('tests/fixtures/file1.json', 'tests/fixtures/file2.json')
-    assert make_set_func_res(func_result) == make_set_txt_file(required_result)
-
-
-def test_gendiff_yaml_flat():
-    required_result = open('tests/fixtures/result_flat.txt', 'r')
-    func_result = generate_diff('tests/fixtures/file1.yaml', 'tests/fixtures/file2.yml')
-    assert make_set_func_res(func_result) == make_set_txt_file(required_result)
-
-
-def test_gendiff_json_yaml_flat():
-    required_result = open('tests/fixtures/result_flat.txt', 'r')
-    func_result = generate_diff('tests/fixtures/file1.json', 'tests/fixtures/file2.yml')
-    assert make_set_func_res(func_result) == make_set_txt_file(required_result)
-
-
-def test_gendiff_json_tree():
-    required_result = open('tests/fixtures/result_tree.txt', 'r')
-    func_result = generate_diff('tests/fixtures/file3.json', 'tests/fixtures/file4.json')
-    assert make_set_func_res(func_result) == make_set_txt_file(required_result)
-
-
-def test_gendiff_yaml_tree():
-    required_result = open('tests/fixtures/result_tree.txt', 'r')
-    func_result = generate_diff('tests/fixtures/file3.yaml', 'tests/fixtures/file4.yml')
-    assert make_set_func_res(func_result) == make_set_txt_file(required_result)
-
-
-def test_gendiff_json_yaml_tree():
-    required_result = open('tests/fixtures/result_tree.txt', 'r')
-    func_result = generate_diff('tests/fixtures/file3.json', 'tests/fixtures/file4.yml')
-    assert make_set_func_res(func_result) == make_set_txt_file(required_result)
-
-
-def test_gendiff_plain():
-    required_result = open('tests/fixtures/result_plain.txt', 'r')
-    func_result = generate_diff('tests/fixtures/file3.json', 'tests/fixtures/file4.yml', format_name='plain')
-    assert make_set_func_res(func_result) == make_set_txt_file(required_result)
-
-
-def make_set_txt_json(required_result):
-    required_result_set = set()
-    for line in required_result:
-        required_line = ((str(line)).strip('\n')).strip(',')
-        required_result_set.add(required_line)
-    return required_result_set
-
-
-def make_set_func_json(func_result):
-    func_result_set = set()
-    func_result_corr = func_result.split('\n')
-    for line in func_result_corr:
-        line_corr = line.strip(',')
-        func_result_set.add(line_corr)
-    return func_result_set
-
-
-def test_gendiff_json_format():
-    required_result = open('tests/fixtures/result_json_form.json', 'r')
-    func_result = generate_diff('tests/fixtures/file3.json', 'tests/fixtures/file4.yml', format_name='json')
-    assert make_set_func_json(func_result) == make_set_txt_json(required_result)
+def test_default_in_parser():
+    sys.argv.append('/dir/file1')
+    sys.argv.append('/dir/file2')
+    parser_args = parse()
+    print(parser_args)
+    assert parser_args['format'] == 'stylish'
