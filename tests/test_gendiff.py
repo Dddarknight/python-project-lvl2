@@ -35,8 +35,6 @@ def test_gendiff(result_file_name, file1_name, file2_name, formatter_name):
 
 
 def test_default_in_parser():
-    sys.argv.append('/dir/file1')
-    sys.argv.append('/dir/file2')
-    parser_args = parse()
-    print(parser_args)
-    assert parser_args['format'] == 'stylish'
+    with mock.patch.object(sys, 'argv', ['prog', '/dir/file1', '/dir/file2']):
+        parser_args = parse()
+        assert parser_args['format'] == 'stylish'
