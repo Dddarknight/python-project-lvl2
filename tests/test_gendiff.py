@@ -5,7 +5,7 @@ import pytest
 import os
 import sys
 from gendiff import generate_diff
-from gendiff.parsers.cli_parsing import parse
+from gendiff.parsers.cli import parse
 from unittest import mock
 
 
