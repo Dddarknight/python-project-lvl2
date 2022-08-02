@@ -17,5 +17,4 @@ def generate_diff(file1_path, file2_path, formatter_name='stylish'):
     file1_dict = file_to_dict.convert(file1_data, file1_format)
     file2_dict = file_to_dict.convert(file2_data, file2_format)
     diff = tree.make(file1_dict, file2_dict)
-    print(diff)
     return modify(diff, file1_dict, file2_dict, formatter_name)
