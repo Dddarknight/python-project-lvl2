@@ -49,7 +49,7 @@ def modify_elem(key_type, node1, node2, path_relative):
     return result_str
 
 
-def modify(diff_tree, node1, node2):
+def modify(diff_tree, file1_node, file2_node):
 
     def inner(diff_tree, path='', result_str=''):
         for key in diff_tree.keys():
@@ -60,8 +60,8 @@ def modify(diff_tree, node1, node2):
                                     path=(path_relative + '.'))
             if key_type in ('updated', 'added', 'removed'):
                 result_str += modify_elem(key_type,
-                                          node1,
-                                          node2,
+                                          file1_node,
+                                          file2_node,
                                           path_relative)
         path = ''
         return result_str
