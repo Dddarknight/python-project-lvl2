@@ -28,32 +28,28 @@ def stringify(value, depth, replacer='    '):
     return iter_(value, depth)
 
 
-def modify(diff_tree, file1_node, file2_node):
-    def inner(diff_tree, depth, file1_node, file2_node):
+def modify(diff_tree):
+    def inner(diff_node, depth):
         indent = '  ' + '    ' * (depth)
         current_indent = '    ' * depth
         result_str = '{\n'
-        for key in diff_tree.keys():
-            type = diff_tree[key]['type']
-            if type == 'nested':
-                new_value = inner(diff_tree[key]['children'],
-                                  depth + 1,
-                                  file1_node[key],
-                                  file2_node[key])
-                result_str += f'{indent}  {key}: {new_value}'
+        for key in diff_node.keys():
+            key_type = diff_node[key]['type']
+            if key_type == 'nested':
+                nested_value = inner(diff_node[key]['children'], depth + 1)
+                result_str += f'{indent}  {key}: {nested_value}'
                 continue
-            if type == 'updated':
-                old_value = stringify(file1_node[key], depth + 1)
-                new_value = stringify(file2_node[key], depth + 1)
+            old_value = stringify(diff_node[key]['old_value'], depth + 1)
+            new_value = stringify(diff_node[key]['new_value'], depth + 1)
+            if key_type == 'updated':
                 result_str += f'{indent}- {key}: {old_value}\n' + (
                               f'{indent}+ {key}: {new_value}\n')
                 continue
-            map_type_to_node = {'unchanged': ['  ', file1_node],
-                                'removed': ['- ', file1_node],
-                                'added': ['+ ', file2_node]}
-            new_value = stringify(map_type_to_node[type][1][key],
-                                  depth + 1)
-            new_indent = map_type_to_node[type][0]
-            result_str += f'{indent}{new_indent}{key}: {new_value}\n'
+            map_type_to_value = {'unchanged': ['  ', old_value],
+                                 'removed': ['- ', old_value],
+                                 'added': ['+ ', new_value]}
+            new_indent = map_type_to_value[key_type][0]
+            result_str += (f'{indent}{new_indent}{key}: '
+                           f'{map_type_to_value[key_type][1]}\n')
         return (result_str + current_indent + '}\n')
-    return (inner(diff_tree, 0, file1_node, file2_node)[:-2] + '}')
+    return (inner(diff_tree, 0)[:-2] + '}')

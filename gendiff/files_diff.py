@@ -1,5 +1,5 @@
-from gendiff.diffs import tree
-from gendiff.parsers import file_to_dict
+from gendiff import diff_tree
+from gendiff import file_to_dict
 from gendiff.formatters.builder import modify
 
 
@@ -16,5 +16,5 @@ def generate_diff(file1_path, file2_path, formatter_name='stylish'):
     file2_format = extract_file_format(file2_path)
     file1_dict = file_to_dict.convert(file1_data, file1_format)
     file2_dict = file_to_dict.convert(file2_data, file2_format)
-    diff = tree.make(file1_dict, file2_dict)
-    return modify(diff, file1_dict, file2_dict, formatter_name)
+    diff = diff_tree.make(file1_dict, file2_dict)
+    return modify(diff, formatter_name)

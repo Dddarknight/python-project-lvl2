@@ -1,33 +1,33 @@
 import json
 
 
-def convert_elem_to_required(key, key_type, node1, node2):
+def convert_elem_to_required(diff_node, key):
     dictionary = {}
+    key_type = diff_node[key]['type']
+    old_value = diff_node[key]['old_value']
+    new_value = diff_node[key]['new_value']
     if key_type in ('updated', 'removed'):
-        dictionary[f'- {key}'] = node1[key]
+        dictionary[f'- {key}'] = old_value
     if key_type in ('updated', 'added'):
-        dictionary[f'+ {key}'] = node2[key]
+        dictionary[f'+ {key}'] = new_value
     if key_type == 'unchanged':
-        dictionary[key] = node1[key]
+        dictionary[key] = new_value
     return dictionary
 
 
-def make_json_dict(diff_tree, file1_node, file2_node):
+def make_json_dict(diff_tree):
 
-    def inner(diff_tree, file1_node, file2_node, dictionary={}):
-        for key in diff_tree.keys():
-            key_type = diff_tree[key]['type']
+    def inner(diff_node, dictionary={}):
+        for key in diff_node.keys():
+            key_type = diff_node[key]['type']
             if key_type == 'nested':
-                dictionary[key] = make_json_dict(diff_tree[key]['children'],
-                                                 file1_node[key],
-                                                 file2_node[key])
+                dictionary[key] = make_json_dict(diff_node[key]['children'])
             else:
-                dictionary.update(convert_elem_to_required(
-                    key, key_type, file1_node, file2_node))
+                dictionary.update(convert_elem_to_required(diff_node, key))
         return dictionary
-    return inner(diff_tree, file1_node, file2_node)
+    return inner(diff_tree)
 
 
-def modify(diff_tree, file1_dict, file2_dict):
+def modify(diff_tree):
     return json.dumps(
-        make_json_dict(diff_tree, file1_dict, file2_dict), indent=4)
+        make_json_dict(diff_tree), indent=4)
