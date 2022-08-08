@@ -1,6 +1,6 @@
 from gendiff import diff_tree
 from gendiff import file_to_dict
-from gendiff.formatters.builder import modify
+from gendiff.formatters.chooser import format
 
 
 def extract_file_format(file_path):
@@ -9,7 +9,7 @@ def extract_file_format(file_path):
     return file_format
 
 
-def generate_diff(file1_path, file2_path, formatter_name='stylish'):
+def generate_diff(file1_path, file2_path, format_name='stylish'):
     file1_data = open(file1_path, 'r')
     file2_data = open(file2_path, 'r')
     file1_format = extract_file_format(file1_path)
@@ -17,4 +17,4 @@ def generate_diff(file1_path, file2_path, formatter_name='stylish'):
     file1_dict = file_to_dict.convert(file1_data, file1_format)
     file2_dict = file_to_dict.convert(file2_data, file2_format)
     diff = diff_tree.make(file1_dict, file2_dict)
-    return modify(diff, formatter_name)
+    return format(diff, format_name)

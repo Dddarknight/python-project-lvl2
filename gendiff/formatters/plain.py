@@ -1,5 +1,9 @@
-def normalize_bool_none(elem):
-    if elem is True:
+def normalize(elem):
+    if isinstance(elem, dict):
+        return '[complex value]'
+    elif isinstance(elem, str):
+        return f"'{elem}'"
+    elif elem is True:
         return 'true'
     elif elem is False:
         return 'false'
@@ -9,52 +13,39 @@ def normalize_bool_none(elem):
         return elem
 
 
-def normalize_dict_str(elem):
-    if isinstance(elem, dict):
-        return '[complex value]'
-    elif isinstance(elem, str):
-        return f"'{elem}'"
-    else:
-        return elem
-
-
-def normalize(elem):
-    return normalize_bool_none(normalize_dict_str(elem))
-
-
 MAP_STATUS_TO_TEXT = {'updated': ' was updated. From ',
                       'removed': ' was removed',
                       'added': ' was added with value: '}
 
 
-def modify_elem(diff_node, key, path_relative):
+def format_elem(node, path_relative):
     result_str = f"Property '{path_relative}'"
-    key_type = diff_node[key]['type']
-    old_value = normalize(diff_node[key]['old_value'])
-    new_value = normalize(diff_node[key]['new_value'])
+    key_type = node['type']
     if key_type == 'removed':
         result_str += f"{MAP_STATUS_TO_TEXT[key_type]}\n"
     elif key_type == 'updated':
+        file1_value = normalize(node['file1_value'])
+        file2_value = normalize(node['file2_value'])
         result_str += (
-            f"{MAP_STATUS_TO_TEXT[key_type]}{old_value} to {new_value}\n")
+            f"{MAP_STATUS_TO_TEXT[key_type]}{file1_value} to {file2_value}\n")
     elif key_type == 'added':
-        result_str += f"{MAP_STATUS_TO_TEXT[key_type]}{new_value}\n"
+        file2_value = normalize(node['file2_value'])
+        result_str += f"{MAP_STATUS_TO_TEXT[key_type]}{file2_value}\n"
     return result_str
 
 
-def modify(diff_tree):
+def format(diff_tree):
 
-    def inner(diff_node, path='', result_str=''):
-        for key in diff_node.keys():
-            key_type = diff_node[key]['type']
-            path_relative = f'{path}{key}'
+    def inner(diff_nodes, path='', result_str=''):
+        for node in diff_nodes:
+            key_type = node['type']
+            key_name = node['key_name']
+            path_relative = f'{path}{key_name}'
             if key_type == 'nested':
-                result_str += inner(diff_node[key]['children'],
+                result_str += inner(node['children'],
                                     path=(path_relative + '.'))
             if key_type in ('updated', 'added', 'removed'):
-                result_str += modify_elem(diff_node,
-                                          key,
-                                          path_relative)
+                result_str += format_elem(node, path_relative)
         path = ''
         return result_str
     return (inner(diff_tree)).strip('\n')

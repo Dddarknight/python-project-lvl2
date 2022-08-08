@@ -1,6 +1,14 @@
 import itertools
 
 
+INDENT_FOR_STRINGIFY = '    '
+MAP_KEY_TYPE_TO_INDENT = {'nested': '  ',
+                          'updated': '',
+                          'unchanged': '  ',
+                          'removed': '- ',
+                          'added': '+ '}
+
+
 def normalize(x):
     if x is True:
         return 'true'
@@ -9,47 +17,52 @@ def normalize(x):
     elif x is None:
         return 'null'
     else:
-        return x
+        return str(x)
 
 
-def stringify(value, depth, replacer='    '):
+def stringify(value, depth):
 
     def iter_(current_value, depth):
         if not isinstance(current_value, dict):
-            return str(normalize(current_value))
+            return normalize(current_value)
 
-        current_indent = replacer * (depth + 1)
+        current_indent = INDENT_FOR_STRINGIFY * (depth + 1)
+        last_indent = INDENT_FOR_STRINGIFY * depth
         lines = []
         for key, val in current_value.items():
             lines.append(f'{current_indent}{key}: {iter_(val, depth+1)}')
-        result = itertools.chain("{", lines, [current_indent[:-4] + "}"])
+        result = itertools.chain("{", lines, [last_indent + "}"])
         return '\n'.join(result)
 
     return iter_(value, depth)
 
 
-def modify(diff_tree):
-    def inner(diff_node, depth):
-        indent = '  ' + '    ' * (depth)
-        current_indent = '    ' * depth
+def format(diff_tree):
+    def inner(diff_nodes, depth=1):
+        initial_indent = ' ' * (depth * 4 - 2)
+        last_indent = ' ' * (depth * 4 - 4)
         result_str = '{\n'
-        for key in diff_node.keys():
-            key_type = diff_node[key]['type']
+        for node in diff_nodes:
+            key_type = node['type']
+            key_name = node['key_name']
+            special_indent = MAP_KEY_TYPE_TO_INDENT[key_type]
+            indent = f'{initial_indent}{special_indent}'
             if key_type == 'nested':
-                nested_value = inner(diff_node[key]['children'], depth + 1)
-                result_str += f'{indent}  {key}: {nested_value}'
+                nested_value = inner(node['children'], depth + 1)
+                result_str += f'{indent}{key_name}: {nested_value}'
                 continue
-            old_value = stringify(diff_node[key]['old_value'], depth + 1)
-            new_value = stringify(diff_node[key]['new_value'], depth + 1)
             if key_type == 'updated':
-                result_str += f'{indent}- {key}: {old_value}\n' + (
-                              f'{indent}+ {key}: {new_value}\n')
+                file1_value = stringify(node['file1_value'], depth)
+                file2_value = stringify(node['file2_value'], depth)
+                result_str += (f'{initial_indent}- {key_name}: {file1_value}\n'
+                               f'{initial_indent}+ {key_name}: {file2_value}\n')
                 continue
-            map_type_to_value = {'unchanged': ['  ', old_value],
-                                 'removed': ['- ', old_value],
-                                 'added': ['+ ', new_value]}
-            new_indent = map_type_to_value[key_type][0]
-            result_str += (f'{indent}{new_indent}{key}: '
-                           f'{map_type_to_value[key_type][1]}\n')
-        return (result_str + current_indent + '}\n')
-    return (inner(diff_tree, 0)[:-2] + '}')
+            if key_type in ('unchanged', 'removed'):
+                value = node['file1_value']
+            else:
+                value = node['file2_value']
+            normalized_value = stringify(value, depth)
+            result_str += (f'{indent}{key_name}: '
+                           f'{normalized_value}\n')
+        return result_str + last_indent + '}' + '\n'
+    return inner(diff_tree).strip('\n')

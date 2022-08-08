@@ -8,6 +8,6 @@ MAP_INPUT_TO_FORMATTER = {'stylish': stylish,
                           'json': json_format}
 
 
-def modify(diff, formatter_name):
+def format(diff, formatter_name):
     formatter = MAP_INPUT_TO_FORMATTER[formatter_name]
-    return formatter.modify(diff)
+    return formatter.format(diff)

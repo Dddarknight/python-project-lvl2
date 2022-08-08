@@ -1,33 +1,32 @@
 def make(node1, node2):
-    tree = {}
+    tree = []
+    all_keys = sorted(list(set(node1.keys()) | set(node2.keys())))
     common_keys = set(node1.keys()) & set(node2.keys())
     removed = set(node1.keys()) - common_keys
     added = set(node2.keys()) - common_keys
-    tree.update({key: {'type': 'removed',
-                       'children': {},
-                       'old_value': node1[key],
-                       'new_value': ''} for key in removed})
-    tree.update({key: {'type': 'added',
-                       'children': {},
-                       'old_value': '',
-                       'new_value': node2[key]} for key in added})
-    for key in common_keys:
-        if isinstance(node1[key], dict) and isinstance(node2[key], dict):
-            children = make(node1[key], node2[key])
-            tree.update({key: {'type': 'nested',
-                               'children': children,
-                               'old_value': 'not defined',
-                               'new_value': 'not defined'}})
-            continue
-        if node1[key] == node2[key]:
-            tree.update({key: {'type': 'unchanged',
-                               'children': {},
-                               'old_value': node1[key],
-                               'new_value': node2[key]}})
+    for key in all_keys:
+        if key in removed:
+            tree.append({'key_name': key,
+                         'type': 'removed',
+                         'file1_value': node1[key]})
+        elif key in added:
+            tree.append({'key_name': key,
+                         'type': 'added',
+                         'file2_value': node2[key]})
         else:
-            tree.update({key: {'type': 'updated',
-                               'children': {},
-                               'old_value': node1[key],
-                               'new_value': node2[key]}})
-    tree = {key: value for key, value in sorted(tree.items())}
+            if isinstance(node1[key], dict) and isinstance(node2[key], dict):
+                children = make(node1[key], node2[key])
+                tree.append({'key_name': key,
+                             'type': 'nested',
+                             'children': children})
+                continue
+            if node1[key] == node2[key]:
+                tree.append({'key_name': key,
+                             'type': 'unchanged',
+                             'file1_value': node1[key]})
+            else:
+                tree.append({'key_name': key,
+                             'type': 'updated',
+                             'file1_value': node1[key],
+                             'file2_value': node2[key]})
     return tree
