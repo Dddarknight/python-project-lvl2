@@ -9,4 +9,5 @@ def convert(file_data, file_format):
         return yaml.load(file_data, Loader=yaml.FullLoader)
     else:
         raise TypeError(
-            'Please, choose a file with the appropriate format')
+            'Please, choose a file with the appropriate format '
+            '(json, yaml, yml)')

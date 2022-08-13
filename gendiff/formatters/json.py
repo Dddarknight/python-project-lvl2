@@ -1,7 +1,7 @@
 import json
 
 
-def convert_elem_to_required(node, key_name):
+def normalize_node(node, key_name):
     dictionary = {}
     key_type = node['type']
     if key_type in ('updated', 'removed'):
@@ -26,7 +26,7 @@ def make_json_dict(diff_tree):
             if key_type == 'nested':
                 dictionary[key_name] = inner(node['children'])
             else:
-                dictionary.update(convert_elem_to_required(node, key_name))
+                dictionary.update(normalize_node(node, key_name))
         return dictionary
     return inner(diff_tree)
 
