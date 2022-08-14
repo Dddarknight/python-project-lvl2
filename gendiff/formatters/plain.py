@@ -46,6 +46,5 @@ def format(diff_tree):
                                     path=(relative_path + '.'))
             if key_type in ('updated', 'added', 'removed'):
                 result_str += format_node(node, relative_path)
-        path = ''
         return result_str
     return (inner(diff_tree)).strip('\n')

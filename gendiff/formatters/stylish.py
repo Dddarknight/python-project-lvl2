@@ -8,6 +8,12 @@ MAP_KEY_TYPE_TO_PREFIX = {'nested': '  ',
                           'added': '+ '}
 
 
+DEFAULT = 'default'
+WITH_SPECIAL_INDENT = 'with_special_indent'
+STANDART_SPACE_COUNT = 4
+STANDART_SPECIAL_INDENT_LENGTH = 2
+
+
 def normalize(x):
     if x is True:
         return 'true'
@@ -19,11 +25,12 @@ def normalize(x):
         return str(x)
 
 
-def get_indent(depth, case='default'):
-    if case == 'with_special_indent':
-        return ' ' * (depth * 4 - 2)
+def get_indent(depth, case=DEFAULT):
+    if case == WITH_SPECIAL_INDENT:
+        return ' ' * (
+            depth * STANDART_SPACE_COUNT - STANDART_SPECIAL_INDENT_LENGTH)
     else:
-        return ' ' * depth * 4
+        return ' ' * depth * STANDART_SPACE_COUNT
 
 
 def stringify(value, depth):
@@ -41,8 +48,8 @@ def stringify(value, depth):
 
 
 def format(diff_tree):
-    def inner(diff_nodes, depth=1):
-        initial_indent = get_indent(depth, case='with_special_indent')
+    def inner(diff_nodes, depth=0):
+        initial_indent = get_indent(depth + 1, case=WITH_SPECIAL_INDENT)
         strings = ['{\n']
         for node in diff_nodes:
             key_type = node['type']
@@ -54,19 +61,20 @@ def format(diff_tree):
                 strings.extend([f'{indent}{key_name}: {nested_value}'])
                 continue
             if key_type == 'updated':
-                file1_value = stringify(node['file1_value'], depth)
-                file2_value = stringify(node['file2_value'], depth)
+                file1_value = stringify(node['file1_value'], depth + 1)
+                file2_value = stringify(node['file2_value'], depth + 1)
                 strings.extend(
                     [f'{initial_indent}- {key_name}: {file1_value}\n',
                      f'{initial_indent}+ {key_name}: {file2_value}\n'])
                 continue
             if key_type in ('unchanged', 'removed'):
-                value = node['file1_value']
+                file1_value = stringify(node['file1_value'], depth + 1)
+                strings.extend([f'{indent}{key_name}: '
+                                f'{file1_value}\n'])
             else:
-                value = node['file2_value']
-            normalized_value = stringify(value, depth)
-            strings.extend([f'{indent}{key_name}: '
-                            f'{normalized_value}\n'])
-        strings.extend([get_indent(depth - 1), '}', '\n'])
+                file2_value = stringify(node['file2_value'], depth + 1)
+                strings.extend([f'{indent}{key_name}: '
+                                f'{file2_value}\n'])
+        strings.extend([get_indent(depth), '}', '\n'])
         return ''.join(strings)
     return ''.join(inner(diff_tree)).strip('\n')
