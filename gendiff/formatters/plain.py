@@ -43,7 +43,7 @@ def format(diff_tree):
             relative_path = f'{path}{key_name}'
             if key_type == 'nested':
                 rows.extend(inner(node['children'],
-                                     path=(f'{relative_path}.')))
+                                  path=(f'{relative_path}.')))
             if key_type in ('updated', 'added', 'removed'):
                 rows.extend(format_node(node, relative_path))
         return rows

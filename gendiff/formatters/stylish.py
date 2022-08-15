@@ -67,9 +67,9 @@ def format(diff_tree):
                 continue
             if key_type in ('unchanged', 'removed'):
                 rows.extend([f'{indent}{key_name}: '
-                                f'{file1_value}\n'])
+                             f'{file1_value}\n'])
             else:
                 rows.extend([f'{indent}{key_name}: '
-                                f'{file2_value}\n'])
+                             f'{file2_value}\n'])
         return ''.join(rows).strip('\n')
     return f"{''.join(inner(diff_tree))}\n}}"
