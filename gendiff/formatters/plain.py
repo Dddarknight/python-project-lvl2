@@ -1,16 +1,15 @@
 def normalize(value):
     if isinstance(value, dict):
         return '[complex value]'
-    elif isinstance(value, str):
+    if isinstance(value, str):
         return f"'{value}'"
-    elif value is True:
+    if value is True:
         return 'true'
-    elif value is False:
+    if value is False:
         return 'false'
-    elif value is None:
+    if value is None:
         return 'null'
-    else:
-        return value
+    return value
 
 
 MAP_TYPE_TO_TEXT = {'updated': ' was updated. From ',
@@ -19,32 +18,33 @@ MAP_TYPE_TO_TEXT = {'updated': ' was updated. From ',
 
 
 def format_node(node, path_relative):
-    result_str = f"Property '{path_relative}'"
+    node_strings = []
+    node_strings.extend(f"Property '{path_relative}'")
     key_type = node['type']
+    file1_value = normalize(node.get('file1_value', None))
+    file2_value = normalize(node.get('file2_value', None))
     if key_type == 'removed':
-        result_str += f"{MAP_TYPE_TO_TEXT[key_type]}\n"
+        node_strings.extend(f"{MAP_TYPE_TO_TEXT[key_type]}\n")
     elif key_type == 'updated':
-        file1_value = normalize(node['file1_value'])
-        file2_value = normalize(node['file2_value'])
-        result_str += (
+        node_strings.extend(
             f"{MAP_TYPE_TO_TEXT[key_type]}{file1_value} to {file2_value}\n")
     elif key_type == 'added':
-        file2_value = normalize(node['file2_value'])
-        result_str += f"{MAP_TYPE_TO_TEXT[key_type]}{file2_value}\n"
-    return result_str
+        node_strings.extend(f"{MAP_TYPE_TO_TEXT[key_type]}{file2_value}\n")
+    return node_strings
 
 
 def format(diff_tree):
 
-    def inner(diff_nodes, path='', result_str=''):
+    def inner(diff_nodes, path=''):
+        strings = []
         for node in diff_nodes:
             key_type = node['type']
             key_name = node['key_name']
             relative_path = f'{path}{key_name}'
             if key_type == 'nested':
-                result_str += inner(node['children'],
-                                    path=(relative_path + '.'))
+                strings.extend(inner(node['children'],
+                                     path=(relative_path + '.')))
             if key_type in ('updated', 'added', 'removed'):
-                result_str += format_node(node, relative_path)
-        return result_str
-    return (inner(diff_tree)).strip('\n')
+                strings.extend(format_node(node, relative_path))
+        return strings
+    return (''.join(inner(diff_tree))).strip('\n')
