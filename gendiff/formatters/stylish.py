@@ -22,10 +22,10 @@ def normalize(x):
     return str(x)
 
 
-def get_indent(depth, flag=False):
+def get_indent(depth, offset=0):
     return ' ' * (
-        depth * STANDART_SPACE_COUNT - STANDART_SPECIAL_INDENT_LENGTH
-    ) if flag else ' ' * depth * STANDART_SPACE_COUNT
+        depth * STANDART_SPACE_COUNT - STANDART_SPECIAL_INDENT_LENGTH * offset
+    )
 
 
 def stringify(value, depth):
@@ -43,33 +43,33 @@ def stringify(value, depth):
 
 
 def format(diff_tree):
-    def inner(diff_nodes, depth=0):
-        initial_indent = get_indent(depth + 1, flag=True)
-        strings = ['{\n']
+    def inner(diff_nodes, depth=1):
+        depth_indent = get_indent(depth, offset=1)
+        rows = ['{\n']
         for node in diff_nodes:
             key_type = node['type']
             key_name = node['key_name']
             special_indent = MAP_KEY_TYPE_TO_PREFIX[key_type]
-            indent = f'{initial_indent}{special_indent}'
+            indent = f'{depth_indent}{special_indent}'
             if key_type == 'nested':
                 nested_value = inner(node['children'], depth + 1)
-                strings.extend([f'{indent}{key_name}: {nested_value}'])
+                rows.extend([f'{indent}{key_name}: {nested_value}', '\n',
+                             get_indent(depth), '}', '\n'])
                 continue
 
-            file1_value = stringify(node.get('file1_value', None), depth + 1)
-            file2_value = stringify(node.get('file2_value', None), depth + 1)
+            file1_value = stringify(node.get('file1_value', None), depth)
+            file2_value = stringify(node.get('file2_value', None), depth)
 
             if key_type == 'updated':
-                strings.extend(
-                    [f'{initial_indent}- {key_name}: {file1_value}\n',
-                     f'{initial_indent}+ {key_name}: {file2_value}\n'])
+                rows.extend(
+                    [f'{depth_indent}- {key_name}: {file1_value}\n',
+                     f'{depth_indent}+ {key_name}: {file2_value}\n'])
                 continue
             if key_type in ('unchanged', 'removed'):
-                strings.extend([f'{indent}{key_name}: '
+                rows.extend([f'{indent}{key_name}: '
                                 f'{file1_value}\n'])
             else:
-                strings.extend([f'{indent}{key_name}: '
+                rows.extend([f'{indent}{key_name}: '
                                 f'{file2_value}\n'])
-        strings.extend([get_indent(depth), '}', '\n'])
-        return ''.join(strings)
-    return ''.join(inner(diff_tree)).strip('\n')
+        return ''.join(rows).strip('\n')
+    return f"{''.join(inner(diff_tree))}\n}}"
