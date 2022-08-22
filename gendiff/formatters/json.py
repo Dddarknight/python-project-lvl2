@@ -4,8 +4,8 @@ import json
 def normalize_node(node, key_name):
     dictionary = {}
     key_type = node['type']
-    file1_value = node.get('file1_value', None)
-    file2_value = node.get('file2_value', None)
+    file1_value = node.get('file1_value')
+    file2_value = node.get('file2_value')
     if key_type in ('updated', 'removed'):
         dictionary[f'- {key_name}'] = file1_value
     if key_type in ('updated', 'added'):

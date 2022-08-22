@@ -21,13 +21,13 @@ def get_fixture_path(name):
      ('result.json', 'file3', 'file4', 'json')])
 def test_gendiff(result_file_name, file1_name, file2_name, format_name):
     with open(get_fixture_path(result_file_name), 'r') as read_file:
-        required_result = read_file.read()
+        expected = read_file.read()
     for file1_format in FORMATS:
         for file2_format in FORMATS:
             file1_path = f'{get_fixture_path(file1_name)}.{file1_format}'
             file2_path = f'{get_fixture_path(file2_name)}.{file2_format}'
             result = generate_diff(file1_path, file2_path, format_name)
-            assert result == required_result
+            assert result == expected
 
 
 @pytest.mark.parametrize(

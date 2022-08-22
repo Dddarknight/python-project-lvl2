@@ -21,8 +21,8 @@ def format_node(node, path_relative):
     node_rows = []
     node_rows.extend(f"Property '{path_relative}'")
     key_type = node['type']
-    file1_value = normalize(node.get('file1_value', None))
-    file2_value = normalize(node.get('file2_value', None))
+    file1_value = normalize(node.get('file1_value'))
+    file2_value = normalize(node.get('file2_value'))
     if key_type == 'removed':
         node_rows.extend(f"{MAP_TYPE_TO_TEXT[key_type]}\n")
     elif key_type == 'updated':
